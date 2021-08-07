@@ -1,19 +1,25 @@
+import 'package:easy_login/screens/homepage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_facebook_login/flutter_facebook_login.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
-  static Stream<User?> authStream() {
+  static String verificationID;
+  static int resendingID;
+  static Stream<User> authStream() {
     return FirebaseAuth.instance.userChanges();
   }
 
-  static User? currentUser() {
+  static User currentUser() {
     return FirebaseAuth.instance.currentUser;
   }
 
-  static Future<User?> signInWithGoogle() async {
+  static Future<User> signInWithGoogle() async {
     GoogleSignIn googleSignIn = GoogleSignIn();
-    GoogleSignInAccount? account = await googleSignIn.signIn();
-    GoogleSignInAuthentication authentication = await account!.authentication;
+    GoogleSignInAccount account = await googleSignIn.signIn();
+    GoogleSignInAuthentication authentication = await account.authentication;
     OAuthCredential credential = GoogleAuthProvider.credential(
       accessToken: authentication.accessToken,
       idToken: authentication.idToken,
@@ -23,7 +29,7 @@ class AuthService {
     return userCredential.user;
   }
 
-  static Future<User?> signInAnonymously() async {
+  static Future<User> signInAnonymously() async {
     UserCredential credential = await FirebaseAuth.instance.signInAnonymously();
     return credential.user;
   }
@@ -33,5 +39,79 @@ class AuthService {
     // await FacebookLogin().logOut();
     await FirebaseAuth.instance.signOut();
     return true;
+  }
+
+  static Future<User> verifyOTP(String otp, BuildContext context) async {
+    try {
+      PhoneAuthCredential authCredential = PhoneAuthProvider.credential(
+          verificationId: verificationID, smsCode: otp);
+
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithCredential(authCredential);
+      Navigator.of(context).pushReplacement(MaterialPageRoute(
+        builder: (context) {
+          return HomePage(user: userCredential.user);
+        },
+      ));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'invalid-verification-code') {
+        print("User has entered a incorrect OTP");
+      }
+      if (e.code == 'session-expired') {
+        print("You One Time Password has been expired");
+      } else {
+        print(e.code);
+      }
+    }
+  }
+
+  static Future<dynamic> signInWithFacebook() async {
+    print("Facebook login start");
+    FacebookLogin facebookLogin = FacebookLogin();
+    facebookLogin.loginBehavior = FacebookLoginBehavior.webOnly;
+    FacebookLoginResult result = await facebookLogin.logIn(['email']);
+    bool loggedIn;
+    switch (result.status) {
+      case FacebookLoginStatus.loggedIn:
+        final FacebookAccessToken accessToken = result.accessToken;
+        OAuthCredential authCredential =
+            FacebookAuthProvider.credential(accessToken.token);
+        UserCredential credential =
+            await FirebaseAuth.instance.signInWithCredential(authCredential);
+        return credential.user;
+      default:
+        {
+          loggedIn = false;
+        }
+    }
+    return loggedIn;
+  }
+
+  static signInWithPhone(String phoneno, BuildContext context) {
+    FirebaseAuth.instance.verifyPhoneNumber(
+      timeout: Duration(seconds: 30),
+      phoneNumber: phoneno,
+      verificationCompleted: (phoneAuthCredential) {
+        FirebaseAuth.instance
+            .signInWithCredential(phoneAuthCredential)
+            .then((value) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+            builder: (context) {
+              return HomePage(user: value.user);
+            },
+          ));
+        });
+      },
+      verificationFailed: (error) {
+        print('verification failed');
+      },
+      codeSent: (verificationId, forceResendingToken) {
+        verificationID = verificationId;
+        resendingID = forceResendingToken;
+      },
+      codeAutoRetrievalTimeout: (verificationId) {
+        verificationID = verificationId;
+      },
+    );
   }
 }

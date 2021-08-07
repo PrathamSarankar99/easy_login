@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class HomePage extends StatefulWidget {
-  final User? user;
-  const HomePage({Key? key, required this.user}) : super(key: key);
+  final User user;
+  const HomePage({Key key, @required this.user}) : super(key: key);
 
   @override
   _HomePageState createState() => _HomePageState();
@@ -33,7 +33,7 @@ class _HomePageState extends State<HomePage> {
             width: MediaQuery.of(context).size.width,
             alignment: Alignment.center,
             child: Text(
-              widget.user!.uid,
+              widget.user.uid,
               style: GoogleFonts.montserrat(
                 color: Color(0xff00A3FF),
               ),

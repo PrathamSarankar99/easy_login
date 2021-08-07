@@ -23,7 +23,7 @@ class EasyLoginApp extends StatelessWidget {
 }
 
 class EasyLogin extends StatefulWidget {
-  EasyLogin({Key? key}) : super(key: key);
+  EasyLogin({Key key}) : super(key: key);
 
   @override
   _EasyLoginState createState() => _EasyLoginState();

@@ -1,20 +1,30 @@
 import 'package:easy_login/screens/homepage.dart';
 import 'package:easy_login/services/auth_service.dart';
+import 'package:easy_login/screens/otp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SignIn extends StatefulWidget {
-  const SignIn({Key? key}) : super(key: key);
+  const SignIn({Key key}) : super(key: key);
 
   @override
   _SignInState createState() => _SignInState();
 }
 
 class _SignInState extends State<SignIn> {
+  TextEditingController controller;
+
+  @override
+  void initState() {
+    controller = TextEditingController();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.only(top: 100.0, left: 20, right: 20),
@@ -51,6 +61,8 @@ class _SignInState extends State<SignIn> {
               Padding(
                 padding: const EdgeInsets.only(top: 50.0),
                 child: TextField(
+                  style: GoogleFonts.montserrat(),
+                  controller: controller,
                   decoration: InputDecoration(
                     prefixIcon: Icon(Icons.phone),
                     hintText: 'Enter a phone no.',
@@ -68,7 +80,14 @@ class _SignInState extends State<SignIn> {
                           borderRadius: BorderRadius.all(Radius.circular(30)))),
                       minimumSize: MaterialStateProperty.all(
                           Size(MediaQuery.of(context).size.width, 50))),
-                  onPressed: () {},
+                  onPressed: () {
+                    AuthService.signInWithPhone(controller.text, context);
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return Otp();
+                      },
+                    ));
+                  },
                   child: Text(
                     "Request OTP",
                     style: GoogleFonts.montserrat(
@@ -116,8 +135,13 @@ class _SignInState extends State<SignIn> {
                           borderRadius: BorderRadius.all(Radius.circular(30)))),
                       minimumSize: MaterialStateProperty.all(
                           Size(MediaQuery.of(context).size.width, 50))),
-                  onPressed: () {
-                    AuthService.signInWithGoogle();
+                  onPressed: () async {
+                    User user = await AuthService.signInWithGoogle();
+                    Navigator.of(context).pushReplacement(MaterialPageRoute(
+                      builder: (context) {
+                        return HomePage(user: user);
+                      },
+                    ));
                   },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
@@ -149,7 +173,16 @@ class _SignInState extends State<SignIn> {
                           borderRadius: BorderRadius.all(Radius.circular(30)))),
                       minimumSize: MaterialStateProperty.all(
                           Size(MediaQuery.of(context).size.width, 50))),
-                  onPressed: () {},
+                  onPressed: () async {
+                    var result = await AuthService.signInWithFacebook();
+                    if (result.runtimeType == User) {
+                      Navigator.of(context).pushReplacement(MaterialPageRoute(
+                        builder: (context) {
+                          return HomePage(user: result);
+                        },
+                      ));
+                    }
+                  },
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
@@ -187,8 +220,8 @@ class _SignInState extends State<SignIn> {
                     ),
                     InkWell(
                       onTap: () async {
-                        User? user = await AuthService.signInAnonymously();
-                        Navigator.of(context).push(MaterialPageRoute(
+                        User user = await AuthService.signInAnonymously();
+                        Navigator.of(context).pushReplacement(MaterialPageRoute(
                           builder: (context) {
                             return HomePage(user: user);
                           },
