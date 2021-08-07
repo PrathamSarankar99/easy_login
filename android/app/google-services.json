@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "322103175355",
+    "project_id": "easylogin-c0751",
+    "storage_bucket": "easylogin-c0751.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:322103175355:android:ad646a06f69e4b297c619e",
+        "android_client_info": {
+          "package_name": "com.example.easy_login"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "322103175355-ku9brqvq28nirte582hfh21hjhnl31eg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.easy_login",
+            "certificate_hash": "ffb836ea66bd6109c5bfafedb4ce741937253fce"
+          }
+        },
+        {
+          "client_id": "322103175355-565agdsdobfcgi94vk942u8h1rddej81.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCThebqp2atLHzjjcfzFXfpFYxdDigGJog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "322103175355-565agdsdobfcgi94vk942u8h1rddej81.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
