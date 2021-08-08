@@ -77,7 +77,8 @@ class _SignInState extends State<SignIn> {
                       backgroundColor:
                           MaterialStateProperty.all(Color(0xff00A3FF)),
                       shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(30)))),
+                          borderRadius:
+                              BorderRadius.all(Radius.circular(1000)))),
                       minimumSize: MaterialStateProperty.all(
                           Size(MediaQuery.of(context).size.width, 50))),
                   onPressed: () {
@@ -105,6 +106,8 @@ class _SignInState extends State<SignIn> {
                   children: [
                     Expanded(
                       child: Divider(
+                        height: 1,
+                        thickness: 1,
                         color: Color(0xff002A42).withOpacity(0.6),
                       ),
                     ),
@@ -120,6 +123,8 @@ class _SignInState extends State<SignIn> {
                     ),
                     Expanded(
                       child: Divider(
+                        height: 1,
+                        thickness: 1,
                         color: Color(0xff002A42).withOpacity(0.6),
                       ),
                     ),
@@ -139,7 +144,7 @@ class _SignInState extends State<SignIn> {
                     User user = await AuthService.signInWithGoogle();
                     Navigator.of(context).pushReplacement(MaterialPageRoute(
                       builder: (context) {
-                        return HomePage(user: user);
+                        return HomePage(user: user,);
                       },
                     ));
                   },

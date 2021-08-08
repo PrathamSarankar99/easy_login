@@ -31,6 +31,11 @@ class EasyLogin extends StatefulWidget {
 
 class _EasyLoginState extends State<EasyLogin> {
   @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SignIn();
   }
